@@ -1,3 +1,4 @@
 /Manifest.toml
 test/files/simulacao_EMIMDCA.xtc
 *.swp
+src/SolvationInteractionPotential.jl

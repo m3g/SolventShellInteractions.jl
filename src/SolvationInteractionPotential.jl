@@ -171,26 +171,35 @@ function electrostatic_potential(
 
     # Compute the electrostatic potential between the solute and the solvent 
     # molecules that have some atom within the cutoff 
-    electrostatic_potential = 0.
-    for (isolvent, md) in pairs(list)
-        # skipt if the solvent molecule is not within the cuotff
-        if !md.within_cutoff 
-            continue
-        end
-        ifirst = (isolvent-1)*natoms_per_molecule + 1
-        ilast = ifirst + natoms_per_molecule - 1
-        for iatom_solvent = ifirst:ilast
-            x = xsolvent[iatom_solvent]
-            qsolvent = solvent_charges[iatom_solvent]
-            for (iatom_solute, y) in pairs(xsolute)
-                qsolute = solute_charges[iatom_solute]
-                y = wrap_relative_to(y,x,box) 
-                d = norm(y-x)
-                electrostatic_potential += qsolvent*qsolute / d
+    nbatches = Threads.nthreads()
+    electrostatic_potential = zeros(nbatches)
+    Threads.@threads for ibatch = 1:nbatches
+        for isolvent = ibatch:nbatches:length(list)
+            # skipt if the solvent molecule is not within the cuotff
+            if !list[isolvent].within_cutoff 
+                continue
+            end
+            ifirst = (isolvent-1)*natoms_per_molecule + 1
+            ilast = ifirst + natoms_per_molecule - 1
+            for iatom_solvent = ifirst:ilast
+                x = xsolvent[iatom_solvent]
+                qsolvent = solvent_charges[iatom_solvent]
+                for (iatom_solute, y) in pairs(xsolute)
+                    qsolute = solute_charges[iatom_solute]
+                    y = wrap_relative_to(y,x,box) 
+                    d = norm(y-x)
+                    #
+                    # uncommment for conventional electrostatic calculation
+                    #
+                    if d > cutoff
+                        continue
+                    end
+                    electrostatic_potential[ibatch] += qsolvent*qsolute / d
+                end
             end
         end
     end
-    return (332.05382e0 * 4.184) * electrostatic_potential
+    return (332.05382e0 * 4.184) * sum(electrostatic_potential)
 end
 
 end # module
