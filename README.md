@@ -26,7 +26,7 @@ solute = select(pdb, "protein")
 solvent = select(pdb, "resname EMI")
 
 # trajectory file (Gromacs xtc only)
-trajectory = "./files/simulacao_EMIMDCA.xtc"
+trajectory = "./files/simulacao_EMIMDCA_curta.xtc"
 
 # topology files
 top_files = [ "./files/topol.top", "./files/tip3p.itp" ]
