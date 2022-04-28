@@ -122,14 +122,14 @@ function electrostatic_potential(
     # Open trajectory with Chemfiles
     traj = Chemfiles.Trajectory(trajectory)
 
-    u = 0.
+    u = zeros(length(traj))
     for iframe in 1:length(traj)
         frame = read(traj)
         coor = reinterpret(reshape, SVector{3,Float64}, Chemfiles.positions(frame))
         unit_cell = Chemfiles.lengths(Chemfiles.UnitCell(frame))
     
         # Compute electrostatic potential
-        u += electrostatic_potential(
+        u[iframe] += electrostatic_potential(
             solute_indexes,
             solvent_indexes,
             natoms_per_molecule,
