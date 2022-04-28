@@ -51,5 +51,18 @@ plot(
 )
 ```
 
+Will produce:
+
+![example.png](./docs/example.png)
+
+## References
+
+
+
+
+
+
+
+
 
 
