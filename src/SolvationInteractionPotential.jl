@@ -123,7 +123,7 @@ function electrostatic_potential(
     traj = Chemfiles.Trajectory(trajectory)
 
     u = 0.
-    for iframe in 1:1
+    for iframe in 1:length(traj)
         frame = read(traj)
         coor = reinterpret(reshape, SVector{3,Float64}, Chemfiles.positions(frame))
         unit_cell = Chemfiles.lengths(Chemfiles.UnitCell(frame))
