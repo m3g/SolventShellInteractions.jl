@@ -46,7 +46,7 @@ u = electrostatic_potential(
 plot(
     u,
     xlabel="step",
-    ylabel="electrostaic potential / kJ / mol",
+    ylabel="electrostaic potential / kcal / mol",
     linewidth=2, framestyle=:box, label=nothing
 )
 ```
