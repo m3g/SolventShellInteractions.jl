@@ -191,9 +191,9 @@ function electrostatic_potential(
                     #
                     # uncommment for conventional electrostatic calculation
                     #
-                    if d > cutoff
-                        continue
-                    end
+                    #if d > cutoff
+                    #    continue
+                    #end
                     electrostatic_potential[ibatch] += qsolvent*qsolute / d
                 end
             end
