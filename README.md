@@ -19,17 +19,17 @@ using PDBTools
 using SolvationInteractionPotential
 
 # read pdb file
-pdb = readPDB("./files/simulacao_EMIMDCA.pdb")
+pdb = readPDB("./simulacao_EMIMDCA.pdb")
 
 # solute atoms
 solute = select(pdb, "protein")
 solvent = select(pdb, "resname EMI")
 
 # trajectory file (Gromacs xtc only)
-trajectory = "./files/simulacao_EMIMDCA_curta.xtc"
+trajectory = "./simulacao_EMIMDCA_curta.xtc"
 
 # topology files
-top_files = [ "./files/topol.top", "./files/tip3p.itp" ]
+top_files = [ "./topol.top", "./tip3p.itp" ]
 
 # distance of the first dip in the distribution
 cutoff = 8.
@@ -47,7 +47,7 @@ plot(
     u,
     xlabel="step",
     ylabel="electrostaic potential / kJ / mol",
-    linewidth=2, framestyle=:box
+    linewidth=2, framestyle=:box, label=nothing
 )
 ```
 

@@ -3,6 +3,7 @@ module SolvationInteractionPotential
 using LinearAlgebra: norm
 using MolecularMinimumDistances
 using StaticArrays
+using ProgressMeter
 
 import CellListMap: wrap_relative_to
 import Chemfiles
@@ -123,7 +124,7 @@ function electrostatic_potential(
     traj = Chemfiles.Trajectory(trajectory)
 
     u = zeros(length(traj))
-    for iframe in 1:length(traj)
+    @showprogress for iframe in 1:length(traj)
         frame = read(traj)
         coor = reinterpret(reshape, SVector{3,Float64}, Chemfiles.positions(frame))
         unit_cell = Chemfiles.lengths(Chemfiles.UnitCell(frame))
