@@ -26,7 +26,7 @@ solute = select(pdb, "protein")
 solvent = select(pdb, "resname EMI")
 
 # trajectory file (Gromacs xtc only)
-trajectory = "./simulacao_EMIMDCA_curta.xtc"
+trajectory = "./simulacao_EMIMDCA.xtc"
 
 # topology files
 top_files = [ "./topol.top", "./tip3p.itp" ]
@@ -51,7 +51,7 @@ plot(
 )
 ```
 
-Will produce:
+Will produce (for a longer trajectory):
 
 ![example.png](./docs/example.png)
 

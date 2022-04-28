@@ -130,7 +130,7 @@ function electrostatic_potential(
         unit_cell = Chemfiles.lengths(Chemfiles.UnitCell(frame))
     
         # Compute electrostatic potential
-        u[iframe] += electrostatic_potential(
+        u[iframe] = electrostatic_potential(
             solute_indexes,
             solvent_indexes,
             natoms_per_molecule,
@@ -167,30 +167,30 @@ function electrostatic_potential(
     xsolvent = @view(coor[solvent])
 
     # Compute the list of minimum-distances within cutoff
-    list = minimum_distances(xsolute, xsolvent, natoms_per_molecule, box)
+    list = minimum_distances(xsolvent, xsolute, natoms_per_molecule, box)
 
     # Compute the electrostatic potential between the solute and the solvent 
     # molecules that have some atom within the cutoff 
     electrostatic_potential = 0.
-    for (isolvent,md) in pairs(list)
+    for (isolvent, md) in pairs(list)
         # skipt if the solvent molecule is not within the cuotff
         if !md.within_cutoff 
             continue
         end
         ifirst = (isolvent-1)*natoms_per_molecule + 1
         ilast = ifirst + natoms_per_molecule - 1
-        for isolvent = ifirst:ilast
-            x = xsolvent[isolvent]
-            qsolvent = solvent_charges[isolvent]
-            for (isolute,y) in pairs(xsolute)
-                qsolute = solute_charges[isolute]
+        for iatom_solvent = ifirst:ilast
+            x = xsolvent[iatom_solvent]
+            qsolvent = solvent_charges[iatom_solvent]
+            for (iatom_solute, y) in pairs(xsolute)
+                qsolute = solute_charges[iatom_solute]
                 y = wrap_relative_to(y,x,box) 
-                d = norm(x-y)
+                d = norm(y-x)
                 electrostatic_potential += qsolvent*qsolute / d
             end
         end
     end
-    return 332.05382e0 * electrostatic_potential
+    return (332.05382e0 * 4.184) * electrostatic_potential
 end
 
 end # module
