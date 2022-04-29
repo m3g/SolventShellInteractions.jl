@@ -25,35 +25,37 @@ using SolventShellInteractions
 dir="./test/files"
 
 # read pdb file
-pdb = readPDB("$dir/simulacao_EMIMDCA.pdb")
+pdb = readPDB("$dir/system.pdb")
 
 # solute atoms
 solute = select(pdb, "protein")
 solvent = select(pdb, "resname EMI")
 
 # trajectory file (Gromacs xtc only)
-trajectory = "$dir/simulacao_EMIMDCA_curta.xtc"
+trajectory = "$dir/simulation_short.xtc"
 
-# topology files
-top_files = [ "$dir/topol.top", "$dir/tip3p.itp" ]
+# topology file
+topology_file = "$dir/processed.top"
 
 # distance of the first dip in the distribution
 cutoff = 10.
 
 # compute electrostatic potential
-u = electrostatic_potential(
+q, lj = nonbonded(
     solute,
     solvent,
     cutoff,
     trajectory, 
-    top_files,
+    topology_file,
 )
 
 plot(
-    u,
+    [ q lj ],
+    labels=[ "electrostatic" "Lennard-Jones" ],
     xlabel="step",
-    ylabel="electrostaic potential / kJ / mol",
-    linewidth=2, framestyle=:box, label=nothing
+    ylabel="potential energy / kJ / mol",
+    linewidth=2, 
+    framestyle=:box,
 )
 ```
 
@@ -69,6 +71,7 @@ Three keyword arguments can be passed to the `electrostatic_potential` function:
 | keyword |  values | default |  meaning  | 
 |:-------------:|:---------------:|:--:|:-------------|
 | `show_progress` | `true/false` | `true` | Display or not the progress bar.  | 
+| `combination_rule` | `:geometric/:arithmetic` | `:geometric` | Type of combination rule for the sigma parameters of the LJ potential.  | 
 | `standard_cutoff` | `true/false` | `false` |Use a standard cutoff, and thus no interaction above the cutoff distance will be considered. | 
 | `shift` | `true/false` | `false` | Use a shifting function, as described [here](https://www.ks.uiuc.edu/Research/namd/2.10/ug/node23.html).  | 
 

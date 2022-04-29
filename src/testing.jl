@@ -1,13 +1,14 @@
 
-function naive_electrostatic_potential(
+function naive_nonbonded(
     solute::AbstractVector{PDBTools.Atom}, 
     solvent::AbstractVector{PDBTools.Atom}, 
     cutoff::Real,
     trajectory::String,
-    topology_files::Vector{String};
+    topology_file::String;
     standard_cutoff::Bool = false,
     shift::Bool = false,
-    show_progress::Bool = true
+    show_progress::Bool = true,
+    combination_rule = :geometric,
 )
 
     # Indexes of the atoms of the solute and solvent
@@ -19,19 +20,17 @@ function naive_electrostatic_potential(
     nmolecules = length(solvent) ÷ natoms_per_molecule
 
     # Read charges from topology files
-    ffcharges = FFType[]
-    for top_file in topology_files
-        read_ffcharges!(ffcharges, top_file)
-    end
+    ff = read_forcefield(topology_file)
 
     # Assign charges
-    solute_charges = assign_charges(solute, ffcharges; warn_aliasing = false)
-    solvent_charges = assign_charges(solvent, ffcharges; warn_aliasing = false)
+    solute_params = assign_forcefield(solute, ff; warn_aliasing = false)
+    solvent_params = assign_forcefield(solvent, ff; warn_aliasing = false)
 
     # Open trajectory with Chemfiles
     traj = Chemfiles.Trajectory(trajectory)
 
-    u = zeros(length(traj))
+    electrostatic_potential = zeros(length(traj))
+    lennard_jones = zeros(length(traj))
     show_progress && (p = Progress(length(traj)))
     for iframe in 1:length(traj)
         frame = read(traj)
@@ -45,32 +44,36 @@ function naive_electrostatic_potential(
         j = 0
         for _ = 1:nmolecules
             qpair = 0.
+            ljpair = 0.
             dmin = +Inf
             for _ = 1:natoms_per_molecule
                 j += 1
                 y = xsolvent[j]
-                qsolvent = solvent_charges[j]
+                qy, eps_y, sig_y = solvent_params[j]
                 for i in eachindex(xsolute)
                     x = xsolute[i]
-                    qsolute = solute_charges[i]
+                    qx, eps_x, sig_x = solute_params[i]
                     y = wrap_relative_to(y, x, box)
                     d = norm(y - x)
                     dmin = min(d,dmin)
                     if d < box.cutoff || !standard_cutoff
-                        qpair += qsolute * qsolvent / d
+                        qpair += qx * qy / d
+                        ljpair += lj(eps_x, eps_y, sig_x, sig_y, d, combination_rule = combination_rule)
                         if shift
-                            qpair -= qsolute * qsolvent / box.cutoff
+                            qpair -= qx * qy / box.cutoff
+                            ljpair -= lj(eps_x, eps_y, sig_x, sig_y, box.cutoff, combination_rule = combination_rule)
                         end
                     end
                 end
             end
             if dmin < box.cutoff
-                u[iframe] += qpair
+                electrostatic_potential[iframe] += qpair
+                lennard_jones[iframe] += ljpair
             end
         end
 
         show_progress && next!(p)
     end
 
-    return (332.05382e0 * 4.184)*u
+    return (332.05382e0 * 4.184)*electrostatic_potential, lennard_jones
 end
