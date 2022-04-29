@@ -91,8 +91,10 @@ function naive_nonbonded(
         show_progress && next!(p)
     end
 
-    return coordination_number,
-    (332.05382e0 * 4.184) * electrostatic_potential,
-    lennard_jones
+    return (
+        coordination_number,
+        (332.05382e0 * 4.184) * electrostatic_potential,
+        lennard_jones,
+    )
 
 end

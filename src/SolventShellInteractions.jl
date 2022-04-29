@@ -297,9 +297,11 @@ function nonbonded(
             end
         end
     end
-    return sum(coordination_number),
-    (332.05382e0 * 4.184) * sum(electrostatic_potential),
-    sum(lennard_jones)
+    return (
+        sum(coordination_number),
+        (332.05382e0 * 4.184) * sum(electrostatic_potential),
+        sum(lennard_jones),
+    )
 
 end
 
