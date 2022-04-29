@@ -58,8 +58,8 @@ end
     # distance of the first dip in the distribution
     cutoff = 10.
 
-    for standard_cutoff in [true, false], switch in [true, false]
-        # compute standard electrostatic potential without switching
+    for standard_cutoff in [true, false], shift in [true, false]
+        # compute standard electrostatic potential without shifting
         u = electrostatic_potential(
             solute,
             solvent,
@@ -67,7 +67,7 @@ end
             trajectory, 
             top_files;
             standard_cutoff = standard_cutoff,
-            switch = switch,
+            shift = shift,
             show_progress = false,
         )
         u_naive = SolventShellInteractions.naive_electrostatic_potential(
@@ -77,7 +77,7 @@ end
                trajectory, 
                top_files;
                standard_cutoff = standard_cutoff,
-               switch = switch,
+               shift = shift,
                show_progress = false,
         )
         @test u ≈ u_naive

@@ -102,7 +102,7 @@ function electrostatic_potential(
     trajectory::String,
     topology_files::Vector{String};
     standard_cutoff::Bool = false,
-    switch::Bool = false,
+    shift::Bool = false,
     show_progress::Bool = true,
 )
 
@@ -144,7 +144,7 @@ function electrostatic_potential(
             unit_cell,
             cutoff;
             standard_cutoff = standard_cutoff,
-            switch = switch
+            shift = shift
         )
 
         show_progress && next!(p)
@@ -163,7 +163,7 @@ function electrostatic_potential(
     unit_cell, 
     cutoff::Real;
     standard_cutoff::Bool = false,
-    switch::Bool = false
+    shift::Bool = false
 )
 
     # Define simulation box in this frame
@@ -199,7 +199,7 @@ function electrostatic_potential(
                     d = norm(y-x)
                     if d < box.cutoff || !standard_cutoff
                         qpair = qsolvent * qsolute / d
-                        if switch
+                        if shift
                             qpair -= qsolvent * qsolute / box.cutoff
                         end
                         electrostatic_potential[ibatch] += qpair

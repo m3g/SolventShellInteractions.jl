@@ -6,7 +6,7 @@ function naive_electrostatic_potential(
     trajectory::String,
     topology_files::Vector{String};
     standard_cutoff::Bool = false,
-    switch::Bool = false,
+    shift::Bool = false,
     show_progress::Bool = true
 )
 
@@ -58,7 +58,7 @@ function naive_electrostatic_potential(
                     dmin = min(d,dmin)
                     if d < box.cutoff || !standard_cutoff
                         qpair += qsolute * qsolvent / d
-                        if switch
+                        if shift
                             qpair -= qsolute * qsolvent / box.cutoff
                         end
                     end
