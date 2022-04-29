@@ -56,7 +56,7 @@ end
 
     for standard_cutoff in [true, false], shift in [true, false]
         # compute standard electrostatic potential without shifting
-        q, lj = nonbonded(
+        cn, q, lj = nonbonded(
             solute,
             solvent,
             cutoff,
@@ -66,7 +66,7 @@ end
             shift = shift,
             show_progress = false,
         )
-        q_naive, lj_naive = SolventShellInteractions.naive_nonbonded(
+        cn_naive, q_naive, lj_naive = SolventShellInteractions.naive_nonbonded(
                solute,
                solvent,
                cutoff,
@@ -76,6 +76,7 @@ end
                shift = shift,
                show_progress = false,
         )
+        @test cn ≈ cn_naive
         @test q ≈ q_naive
         @test lj ≈ lj_naive
     end

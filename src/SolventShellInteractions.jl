@@ -176,6 +176,7 @@ function nonbonded(
     # Open trajectory with Chemfiles
     traj = Chemfiles.Trajectory(trajectory)
 
+    coordination_number = zeros(Int,length(traj))
     electrostatic_potential = zeros(length(traj))
     lennard_jones = zeros(length(traj))
     show_progress && (p = Progress(length(traj)))
@@ -185,7 +186,9 @@ function nonbonded(
         unit_cell = Chemfiles.lengths(Chemfiles.UnitCell(frame))
     
         # Compute electrostatic potential
-        electrostatic_potential[iframe], lennard_jones[iframe] = nonbonded(
+        coordination_number[iframe], 
+        electrostatic_potential[iframe], 
+        lennard_jones[iframe] = nonbonded(
             solute_indexes,
             solvent_indexes,
             natoms_per_molecule,
@@ -201,7 +204,7 @@ function nonbonded(
         show_progress && next!(p)
     end
 
-    return electrostatic_potential, lennard_jones
+    return coordination_number, electrostatic_potential, lennard_jones
 end
 
 function lj(eps_x, eps_y, sig_x, sig_y, d; combination_rule = :geometric) 
@@ -243,6 +246,7 @@ function nonbonded(
     # Compute the electrostatic potential between the solute and the solvent 
     # molecules that have some atom within the cutoff 
     nbatches = Threads.nthreads()
+    coordination_number = zeros(Int, nbatches)
     electrostatic_potential = zeros(nbatches)
     lennard_jones = zeros(nbatches)
     Threads.@threads for ibatch = 1:nbatches
@@ -251,6 +255,7 @@ function nonbonded(
             if !list[isolvent].within_cutoff 
                 continue
             end
+            coordination_number[ibatch] += 1
             ifirst = (isolvent-1)*natoms_per_molecule + 1
             ilast = ifirst + natoms_per_molecule - 1
             for iatom_solvent = ifirst:ilast
@@ -274,7 +279,10 @@ function nonbonded(
             end
         end
     end
-    return (332.05382e0 * 4.184) * sum(electrostatic_potential), sum(lennard_jones)
+    return sum(coordination_number),
+           (332.05382e0 * 4.184) * sum(electrostatic_potential), 
+           sum(lennard_jones)
+
 end
 
 include("./testing.jl")

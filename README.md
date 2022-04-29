@@ -41,7 +41,7 @@ topology_file = "$dir/processed.top"
 cutoff = 10.
 
 # compute electrostatic potential
-q, lj = nonbonded(
+cn, q, lj = nonbonded(
     solute,
     solvent,
     cutoff,
@@ -50,12 +50,14 @@ q, lj = nonbonded(
 )
 
 plot(
-    [ q lj ],
-    labels=[ "electrostatic" "Lennard-Jones" ],
-    xlabel="step",
-    ylabel="potential energy / kJ / mol",
+    [ cn q lj ],
+    xlabel=[ "" "" "step" ],
+    ylabel=[ "coordination\n number" "electrostatic\n energy / kJ / mol" "LJ energy / kJ / mol" ],
     linewidth=2, 
     framestyle=:box,
+    labels=:none,
+    layout=(3,1),
+    size=(600,700),
 )
 ```
 

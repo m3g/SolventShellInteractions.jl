@@ -29,6 +29,7 @@ function naive_nonbonded(
     # Open trajectory with Chemfiles
     traj = Chemfiles.Trajectory(trajectory)
 
+    coordination_number = zeros(Int, length(traj))
     electrostatic_potential = zeros(length(traj))
     lennard_jones = zeros(length(traj))
     show_progress && (p = Progress(length(traj)))
@@ -67,6 +68,7 @@ function naive_nonbonded(
                 end
             end
             if dmin < box.cutoff
+                coordination_number[iframe] += 1
                 electrostatic_potential[iframe] += qpair
                 lennard_jones[iframe] += ljpair
             end
@@ -75,5 +77,8 @@ function naive_nonbonded(
         show_progress && next!(p)
     end
 
-    return (332.05382e0 * 4.184)*electrostatic_potential, lennard_jones
+    return coordination_number,
+           (332.05382e0 * 4.184)*electrostatic_potential, 
+           lennard_jones
+
 end
