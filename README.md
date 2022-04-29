@@ -3,6 +3,8 @@
 Computes the electrostatic potential of the molecules which have at least
 one atom within a distance from a solute. 
 
+Currently only works with Gromacs topology and trajectory formats. 
+
 ## Installation
 
 ```julia
