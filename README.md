@@ -5,6 +5,8 @@ one atom within a distance from a solute.
 
 Currently only works with Gromacs topology and trajectory formats. 
 
+The calculations run in parallel if `julia` is initialized with multi-threading support, i. e. with `julia -t auto`, for example.
+
 ## Installation
 
 ```julia
@@ -66,9 +68,11 @@ Three keyword arguments can be passed to the `electrostatic_potential` function:
 
 | keyword |  values | default |  meaning  | 
 |:-------------:|:---------------:|:--:|:-------------|
+| `show_progress` | `true/false` | `true` | Display or not the progress bar.  | 
 | `standard_cutoff` | `true/false` | `false` |Use a standard cutoff, and thus no interaction above the cutoff distance will be considered. | 
 | `shift` | `true/false` | `false` | Use a shifting function, as described [here](https://www.ks.uiuc.edu/Research/namd/2.10/ug/node23.html).  | 
-| `show_progress` | `true/false` | `true` | Display or not the progress bar.  | 
+
+Note that with `standard_cutoff` and/or `shift` turned on, the calculation is not particularly interesting, as it does not represent anymore the interaction of the complete molecules that have at least one atom within the desired distance range. These options are mostly used for testing purposes.
 
 ## Related work:
 
