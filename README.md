@@ -20,18 +20,20 @@ using Plots
 using PDBTools
 using SolventShellInteractions
 
+dir="./test/files"
+
 # read pdb file
-pdb = readPDB("./simulacao_EMIMDCA.pdb")
+pdb = readPDB("$dir/simulacao_EMIMDCA.pdb")
 
 # solute atoms
 solute = select(pdb, "protein")
 solvent = select(pdb, "resname EMI")
 
 # trajectory file (Gromacs xtc only)
-trajectory = "./simulacao_EMIMDCA_curta.xtc"
+trajectory = "$dir/simulacao_EMIMDCA_curta.xtc"
 
 # topology files
-top_files = [ "./topol.top", "./tip3p.itp" ]
+top_files = [ "$dir/topol.top", "$dir/tip3p.itp" ]
 
 # distance of the first dip in the distribution
 cutoff = 10.
