@@ -63,7 +63,6 @@ Will produce (for a longer trajectory):
 
 ![example.png](./docs/example.png)
 
-
 ### Options
 
 Three keyword arguments can be passed to the `electrostatic_potential` function:
