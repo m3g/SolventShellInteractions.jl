@@ -1,6 +1,6 @@
 
 <p align=center>
-<img height=100px src="./docs/assets/logo.svg">
+<img height=200px src="./docs/assets/logo.svg">
 </p>
 
 # SolventShellInteractions
