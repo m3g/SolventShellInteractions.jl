@@ -6,7 +6,8 @@ function naive_electrostatic_potential(
     trajectory::String,
     topology_files::Vector{String};
     standard_cutoff::Bool = false,
-    switch::Bool = false
+    switch::Bool = false,
+    show_progress::Bool = true
 )
 
     # Indexes of the atoms of the solute and solvent
@@ -31,7 +32,8 @@ function naive_electrostatic_potential(
     traj = Chemfiles.Trajectory(trajectory)
 
     u = zeros(length(traj))
-    @showprogress for iframe in 1:length(traj)
+    show_progress && (p = Progress(length(traj)))
+    for iframe in 1:length(traj)
         frame = read(traj)
         coor = reinterpret(reshape, SVector{3,Float64}, Chemfiles.positions(frame))
         unit_cell = Chemfiles.lengths(Chemfiles.UnitCell(frame))
@@ -67,6 +69,7 @@ function naive_electrostatic_potential(
             end
         end
 
+        show_progress && next!(p)
     end
 
     return (332.05382e0 * 4.184)*u

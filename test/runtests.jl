@@ -67,9 +67,9 @@ end
             trajectory, 
             top_files;
             standard_cutoff = standard_cutoff,
-            switch = switch
+            switch = switch,
+            show_progress = false,
         )
-
         u_naive = SolventShellInteractions.naive_electrostatic_potential(
                solute,
                solvent,
@@ -77,7 +77,8 @@ end
                trajectory, 
                top_files;
                standard_cutoff = standard_cutoff,
-               switch = switch
+               switch = switch,
+               show_progress = false,
         )
         @test u ≈ u_naive
     end
