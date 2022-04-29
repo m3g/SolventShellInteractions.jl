@@ -22,46 +22,28 @@ dir="./files"
     # distance of the first dip in the distribution
     cutoff = 10.
 
-    # compute standard electrostatic potential without switching
-    u = electrostatic_potential(
-        solute,
-        solvent,
-        cutoff,
-        trajectory, 
-        top_files;
-        standard_cutoff = true,
-        switch = false
-    )
+    for standard_cutoff in [true, false], switch in [true, false]
+        # compute standard electrostatic potential without switching
+        u = electrostatic_potential(
+            solute,
+            solvent,
+            cutoff,
+            trajectory, 
+            top_files;
+            standard_cutoff = standard_cutoff,
+            switch = switch
+        )
 
-    u_naive = SolvationInteractionPotential.naive_electrostatic_potential(
-           solute,
-           solvent,
-           cutoff,
-           trajectory, 
-           top_files;
-           switch = false
-    )
-    @test u ≈ u_naive
-
-    # compute standard electrostatic potential with switching
-    u = electrostatic_potential(
-        solute,
-        solvent,
-        cutoff,
-        trajectory, 
-        top_files;
-        standard_cutoff = true,
-        switch = true
-    )
-
-    u_naive = SolvationInteractionPotential.naive_electrostatic_potential(
-           solute,
-           solvent,
-           cutoff,
-           trajectory, 
-           top_files;
-           switch = true
-    )
-    @test u ≈ u_naive
+        u_naive = SolvationInteractionPotential.naive_electrostatic_potential(
+               solute,
+               solvent,
+               cutoff,
+               trajectory, 
+               top_files;
+               standard_cutoff = standard_cutoff,
+               switch = switch
+        )
+        @test u ≈ u_naive
+    end
 
 end

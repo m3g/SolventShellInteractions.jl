@@ -193,16 +193,13 @@ function electrostatic_potential(
                     qsolute = solute_charges[iatom_solute]
                     y = wrap_relative_to(y,x,box) 
                     d = norm(y-x)
-                    qpair = qsolvent * qsolute / d
-                    if standard_cutoff
-                        if d > box.cutoff
-                            continue
-                        end
+                    if d < box.cutoff || !standard_cutoff
+                        qpair = qsolvent * qsolute / d
                         if switch
                             qpair -= qsolvent * qsolute / box.cutoff
                         end
+                        electrostatic_potential[ibatch] += qpair
                     end
-                    electrostatic_potential[ibatch] += qpair
                 end
             end
         end
