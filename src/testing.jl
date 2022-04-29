@@ -1,7 +1,7 @@
 
 function naive_nonbonded(
-    solute::AbstractVector{PDBTools.Atom}, 
-    solvent::AbstractVector{PDBTools.Atom}, 
+    solute::AbstractVector{PDBTools.Atom},
+    solvent::AbstractVector{PDBTools.Atom},
     cutoff::Real,
     trajectory::String,
     topology_file::String;
@@ -12,8 +12,8 @@ function naive_nonbonded(
 )
 
     # Indexes of the atoms of the solute and solvent
-    solute_indexes = [ at.index_pdb for at in solute ]
-    solvent_indexes = [ at.index_pdb for at in solvent ]
+    solute_indexes = [at.index_pdb for at in solute]
+    solvent_indexes = [at.index_pdb for at in solvent]
 
     # Number of atoms of the solvent molecules
     natoms_per_molecule = length(PDBTools.select(solvent, "resnum $(solvent[1].resnum)"))
@@ -33,7 +33,7 @@ function naive_nonbonded(
     electrostatic_potential = zeros(length(traj))
     lennard_jones = zeros(length(traj))
     show_progress && (p = Progress(length(traj)))
-    for iframe in 1:length(traj)
+    for iframe = 1:length(traj)
         frame = read(traj)
         coor = reinterpret(reshape, SVector{3,Float64}, Chemfiles.positions(frame))
         unit_cell = Chemfiles.lengths(Chemfiles.UnitCell(frame))
@@ -41,11 +41,11 @@ function naive_nonbonded(
 
         xsolute = @view(coor[solute_indexes])
         xsolvent = @view(coor[solvent_indexes])
-    
+
         j = 0
         for _ = 1:nmolecules
-            qpair = 0.
-            ljpair = 0.
+            qpair = 0.0
+            ljpair = 0.0
             dmin = +Inf
             for _ = 1:natoms_per_molecule
                 j += 1
@@ -56,13 +56,27 @@ function naive_nonbonded(
                     qx, eps_x, sig_x = solute_params[i]
                     y = wrap_relative_to(y, x, box)
                     d = norm(y - x)
-                    dmin = min(d,dmin)
+                    dmin = min(d, dmin)
                     if d < box.cutoff || !standard_cutoff
                         qpair += qx * qy / d
-                        ljpair += lj(eps_x, eps_y, sig_x, sig_y, d, combination_rule = combination_rule)
+                        ljpair += lj(
+                            eps_x,
+                            eps_y,
+                            sig_x,
+                            sig_y,
+                            d,
+                            combination_rule = combination_rule,
+                        )
                         if shift
                             qpair -= qx * qy / box.cutoff
-                            ljpair -= lj(eps_x, eps_y, sig_x, sig_y, box.cutoff, combination_rule = combination_rule)
+                            ljpair -= lj(
+                                eps_x,
+                                eps_y,
+                                sig_x,
+                                sig_y,
+                                box.cutoff,
+                                combination_rule = combination_rule,
+                            )
                         end
                     end
                 end
@@ -78,7 +92,7 @@ function naive_nonbonded(
     end
 
     return coordination_number,
-           (332.05382e0 * 4.184)*electrostatic_potential, 
-           lennard_jones
+    (332.05382e0 * 4.184) * electrostatic_potential,
+    lennard_jones
 
 end

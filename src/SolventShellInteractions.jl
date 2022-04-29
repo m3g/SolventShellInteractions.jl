@@ -42,7 +42,7 @@ function read_forcefield!(ff::Vector{FFType}, topology::String)
                 reading = true
                 continue
             end
-            if !reading 
+            if !reading
                 continue
             end
             # end of atoms section 
@@ -57,12 +57,12 @@ function read_forcefield!(ff::Vector{FFType}, topology::String)
             end
             # read atom type data
             fftype = FFType(
-                type = type_data[2], 
-                name = type_data[5], 
-                resname = type_data[4], 
+                type = type_data[2],
+                name = type_data[5],
+                resname = type_data[4],
                 charge = parse(Float64, type_data[7]),
-                eps = -1.,
-                sig = -1.,
+                eps = -1.0,
+                sig = -1.0,
             )
             # if the atom type is not repeated, add to the list
             if isnothing(findfirst(isequal(fftype), ff))
@@ -80,7 +80,7 @@ function read_forcefield!(ff::Vector{FFType}, topology::String)
                 reading = true
                 continue
             end
-            if !reading 
+            if !reading
                 continue
             end
             # end of atoms section 
@@ -101,12 +101,12 @@ function read_forcefield!(ff::Vector{FFType}, topology::String)
                 if atom_type.sig == -1
                     if atom_type.type == type_data[1]
                         ff[itype] = FFType(
-                            type = ff[itype].type, 
-                            name = ff[itype].name, 
-                            resname = ff[itype].resname, 
+                            type = ff[itype].type,
+                            name = ff[itype].name,
+                            resname = ff[itype].resname,
                             charge = ff[itype].charge,
-                            eps = parse(Float64,type_data[ilast-1]),
-                            sig = 10*parse(Float64,type_data[ilast-2]),
+                            eps = parse(Float64, type_data[ilast-1]),
+                            sig = 10 * parse(Float64, type_data[ilast-2]),
                         )
                     end
                 end
@@ -117,19 +117,21 @@ function read_forcefield!(ff::Vector{FFType}, topology::String)
 end
 
 function assign_forcefield(atoms, ff; warn_aliasing = true)
-    params = Vector{typeof((q=0.,eps=0.,sig=0.))}(undef, length(atoms))
+    params = Vector{typeof((q = 0.0, eps = 0.0, sig = 0.0))}(undef, length(atoms))
     for (iat, at) in pairs(atoms)
-        itype = findfirst( type -> ( type.resname == at.resname && type.name == at.name ), ff )
+        itype = findfirst(type -> (type.resname == at.resname && type.name == at.name), ff)
         if isnothing(itype)
             # checking for name aliasing for H atoms
             if length(at.name) == 4
-                aliased_name = at.name[2:4]*at.name[1]
-                itype = findfirst( 
-                    type -> ( type.resname == at.resname && type.name == aliased_name ),
-                    ff
+                aliased_name = at.name[2:4] * at.name[1]
+                itype = findfirst(
+                    type -> (type.resname == at.resname && type.name == aliased_name),
+                    ff,
                 )
                 if !isnothing(itype)
-                    warn_aliasing && println(" Warning: aliasing $(at.resname): $(at.name) to $(aliased_name).")
+                    warn_aliasing && println(
+                        " Warning: aliasing $(at.resname): $(at.name) to $(aliased_name).",
+                    )
                 end
             end
             if isnothing(itype)
@@ -139,18 +141,20 @@ function assign_forcefield(atoms, ff; warn_aliasing = true)
                     error("Could not find charges for atom: $(at.name) $(at.resname)")
                 end
                 if ff[itype].eps == -1 || ff[itype].sig == -1
-                    error("Could not find Lennard-Jones parameters for atom: $(at.name) $(at.resname)")
+                    error(
+                        "Could not find Lennard-Jones parameters for atom: $(at.name) $(at.resname)",
+                    )
                 end
             end
         end
-        params[iat] = (q=ff[itype].charge, eps=ff[itype].eps, sig=ff[itype].sig)
+        params[iat] = (q = ff[itype].charge, eps = ff[itype].eps, sig = ff[itype].sig)
     end
     return params
 end
 
 function nonbonded(
-    solute::AbstractVector{PDBTools.Atom}, 
-    solvent::AbstractVector{PDBTools.Atom}, 
+    solute::AbstractVector{PDBTools.Atom},
+    solvent::AbstractVector{PDBTools.Atom},
     cutoff::Real,
     trajectory::String,
     topology_file::String;
@@ -160,8 +164,8 @@ function nonbonded(
 )
 
     # Indexes of the atoms of the solute and solvent
-    solute_indexes = [ at.index_pdb for at in solute ]
-    solvent_indexes = [ at.index_pdb for at in solvent ]
+    solute_indexes = [at.index_pdb for at in solute]
+    solvent_indexes = [at.index_pdb for at in solvent]
 
     # Number of atoms of the solvent molecules
     natoms_per_molecule = length(PDBTools.select(solvent, "resnum $(solvent[1].resnum)"))
@@ -176,18 +180,18 @@ function nonbonded(
     # Open trajectory with Chemfiles
     traj = Chemfiles.Trajectory(trajectory)
 
-    coordination_number = zeros(Int,length(traj))
+    coordination_number = zeros(Int, length(traj))
     electrostatic_potential = zeros(length(traj))
     lennard_jones = zeros(length(traj))
     show_progress && (p = Progress(length(traj)))
-    for iframe in 1:length(traj)
+    for iframe = 1:length(traj)
         frame = read(traj)
         coor = reinterpret(reshape, SVector{3,Float64}, Chemfiles.positions(frame))
         unit_cell = Chemfiles.lengths(Chemfiles.UnitCell(frame))
-    
+
         # Compute electrostatic potential
-        coordination_number[iframe], 
-        electrostatic_potential[iframe], 
+        coordination_number[iframe],
+        electrostatic_potential[iframe],
         lennard_jones[iframe] = nonbonded(
             solute_indexes,
             solvent_indexes,
@@ -198,7 +202,7 @@ function nonbonded(
             unit_cell,
             cutoff;
             standard_cutoff = standard_cutoff,
-            shift = shift
+            shift = shift,
         )
 
         show_progress && next!(p)
@@ -207,28 +211,28 @@ function nonbonded(
     return coordination_number, electrostatic_potential, lennard_jones
 end
 
-function lj(eps_x, eps_y, sig_x, sig_y, d; combination_rule = :geometric) 
+function lj(eps_x, eps_y, sig_x, sig_y, d; combination_rule = :geometric)
     if combination_rule == :geometric
         sig = sqrt(sig_x * sig_y)
     else
         sig = 0.5 * (sig_x + sig_y)
     end
-    lj = @fastpow 4 * sqrt(eps_x * eps_y) * ( (sig / d)^12 - (sig / d)^6 )
+    lj = @fastpow 4 * sqrt(eps_x * eps_y) * ((sig / d)^12 - (sig / d)^6)
     return lj
 end
 
 function nonbonded(
-    solute::AbstractVector{Int}, 
-    solvent::AbstractVector{Int}, 
-    natoms_per_molecule::Int, 
-    solute_params::AbstractVector{<:NamedTuple}, 
-    solvent_params::AbstractVector{<:NamedTuple}, 
-    coor::AbstractVector{<:SVector}, 
-    unit_cell, 
+    solute::AbstractVector{Int},
+    solvent::AbstractVector{Int},
+    natoms_per_molecule::Int,
+    solute_params::AbstractVector{<:NamedTuple},
+    solvent_params::AbstractVector{<:NamedTuple},
+    coor::AbstractVector{<:SVector},
+    unit_cell,
     cutoff::Real;
     standard_cutoff::Bool = false,
     shift::Bool = false,
-    combination_rule = :geometric
+    combination_rule = :geometric,
 )
 
     # Define simulation box in this frame
@@ -252,25 +256,39 @@ function nonbonded(
     Threads.@threads for ibatch = 1:nbatches
         for isolvent = ibatch:nbatches:length(list)
             # skipt if the solvent molecule is not within the cuotff
-            if !list[isolvent].within_cutoff 
+            if !list[isolvent].within_cutoff
                 continue
             end
             coordination_number[ibatch] += 1
-            ifirst = (isolvent-1)*natoms_per_molecule + 1
+            ifirst = (isolvent - 1) * natoms_per_molecule + 1
             ilast = ifirst + natoms_per_molecule - 1
             for iatom_solvent = ifirst:ilast
                 x = xsolvent[iatom_solvent]
                 qx, eps_x, sig_x = solvent_params[iatom_solvent]
                 for (iatom_solute, y) in pairs(xsolute)
                     qy, eps_y, sig_y = solute_params[iatom_solute]
-                    y = wrap_relative_to(y,x,box) 
-                    d = norm(y-x)
+                    y = wrap_relative_to(y, x, box)
+                    d = norm(y - x)
                     if d < box.cutoff || !standard_cutoff
                         qpair = qx * qy / d
-                        ljpair = lj(eps_x, eps_y, sig_x, sig_y, d; combination_rule = combination_rule)
+                        ljpair = lj(
+                            eps_x,
+                            eps_y,
+                            sig_x,
+                            sig_y,
+                            d;
+                            combination_rule = combination_rule,
+                        )
                         if shift
                             qpair -= qx * qy / box.cutoff
-                            ljpair -= lj(eps_x, eps_y, sig_x, sig_y, box.cutoff; combination_rule = combination_rule)
+                            ljpair -= lj(
+                                eps_x,
+                                eps_y,
+                                sig_x,
+                                sig_y,
+                                box.cutoff;
+                                combination_rule = combination_rule,
+                            )
                         end
                         electrostatic_potential[ibatch] += qpair
                         lennard_jones[ibatch] += ljpair
@@ -280,8 +298,8 @@ function nonbonded(
         end
     end
     return sum(coordination_number),
-           (332.05382e0 * 4.184) * sum(electrostatic_potential), 
-           sum(lennard_jones)
+    (332.05382e0 * 4.184) * sum(electrostatic_potential),
+    sum(lennard_jones)
 
 end
 
