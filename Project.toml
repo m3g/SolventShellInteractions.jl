@@ -1,7 +1,7 @@
 name = "SolventShellInteractions"
 uuid = "6093f9f3-f1b0-4441-8561-b50b03dfd470"
 authors = ["Leandro Martinez <lmartine@unicamp.br> and contributors"]
-version = "0.2.0"
+version = "0.2.1-DEV"
 
 [deps]
 CellListMap = "69e1c6dd-3888-40e6-b3c8-31ac5f578864"
