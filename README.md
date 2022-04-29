@@ -5,8 +5,10 @@
 
 # SolventShellInteractions
 
-Computes the electrostatic potential of the molecules which have at least
-one atom within a distance from a solute. 
+Computes the non-bonded potential of the molecules which have at least
+one atom within a distance from a solute. Used to evaluate the interactions of a solvent
+with a solute, for the solvent molecules in coordination shells. The coordination
+number is also computed.  
 
 Currently only works with Gromacs topology and trajectory formats. 
 
