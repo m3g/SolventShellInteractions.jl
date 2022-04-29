@@ -27,6 +27,8 @@ function naive_electrostatic_potential(
     solute_charges = assign_charges(solute, ffcharges; warn_aliasing = false)
     solvent_charges = assign_charges(solvent, ffcharges; warn_aliasing = false)
 
+    
+
     # Open trajectory with Chemfiles
     traj = Chemfiles.Trajectory(trajectory)
 
