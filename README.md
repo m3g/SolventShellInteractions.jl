@@ -74,7 +74,7 @@ Will produce (for a longer trajectory):
 
 ### Options
 
-Three keyword arguments can be passed to the `nonbonded` function:
+Some keyword arguments can be passed to the `nonbonded` function:
 
 | keyword |  values | default |  meaning  | 
 |:-------------:|:---------------:|:--:|:-------------|
