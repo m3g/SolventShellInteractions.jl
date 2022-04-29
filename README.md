@@ -1,3 +1,8 @@
+
+<table align=center width=100%><tr><td>
+<img src="./docs/assets/logo.svg>
+</td></tr></table>
+
 # SolventShellInteractions
 
 Computes the electrostatic potential of the molecules which have at least
