@@ -1,4 +1,4 @@
-name = "SolvationInteractionPotential"
+name = "SolventShellInteractions"
 uuid = "6093f9f3-f1b0-4441-8561-b50b03dfd470"
 authors = ["Leandro Martinez <lmartine@unicamp.br> and contributors"]
 version = "0.1.0"

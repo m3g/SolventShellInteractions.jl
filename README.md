@@ -1,4 +1,4 @@
-# SolvationInteractionPotential
+# SolventShellInteractions
 
 Computes the electrostatic potential of the molecules which have at least
 one atom within a distance from a solute. 
@@ -10,7 +10,7 @@ Currently only works with Gromacs topology and trajectory formats.
 ```julia
 julia> import Pkg
 
-julia> Pkg.add(url="http://github.com/m3g/SolvationInteractionPotential.jl")
+julia> Pkg.add(url="http://github.com/m3g/SolventShellInteractions.jl")
 ```
 
 ## Example
@@ -18,7 +18,7 @@ julia> Pkg.add(url="http://github.com/m3g/SolvationInteractionPotential.jl")
 ```julia
 using Plots
 using PDBTools
-using SolvationInteractionPotential
+using SolventShellInteractions
 
 # read pdb file
 pdb = readPDB("./simulacao_EMIMDCA.pdb")

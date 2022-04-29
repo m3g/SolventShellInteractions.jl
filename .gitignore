@@ -1,6 +1,6 @@
 /Manifest.toml
 test/files/simulacao_EMIMDCA.xtc
 *.swp
-src/SolvationInteractionPotential.jl
+src/SolventShellInteractions.jl
 test/files/processed.xtc
 .vscode/settings.json

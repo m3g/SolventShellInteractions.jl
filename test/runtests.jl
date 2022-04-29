@@ -1,10 +1,10 @@
-using SolvationInteractionPotential
+using SolventShellInteractions
 using Test
 using PDBTools
 
 dir="./files"
 
-@testset "SolvationInteractionPotential.jl" begin
+@testset "SolventShellInteractions.jl" begin
 
     # read pdb file
     pdb = readPDB("$dir/simulacao_EMIMDCA.pdb")
@@ -34,7 +34,7 @@ dir="./files"
             switch = switch
         )
 
-        u_naive = SolvationInteractionPotential.naive_electrostatic_potential(
+        u_naive = SolventShellInteractions.naive_electrostatic_potential(
                solute,
                solvent,
                cutoff,
