@@ -100,7 +100,9 @@ function electrostatic_potential(
     solvent::AbstractVector{PDBTools.Atom}, 
     cutoff::Real,
     trajectory::String,
-    topology_files::Vector{String}
+    topology_files::Vector{String};
+    standard_cutoff::Bool = false,
+    switch::Bool = false,
 )
 
     # Indexes of the atoms of the solute and solvent
@@ -138,13 +140,14 @@ function electrostatic_potential(
             solvent_charges,
             coor,
             unit_cell,
-            cutoff
+            cutoff;
+            standard_cutoff = standard_cutoff,
+            switch = switch
         )
     end
 
     return u
 end
-
 
 function electrostatic_potential(
     solute::AbstractVector{Int}, 
@@ -154,7 +157,9 @@ function electrostatic_potential(
     solvent_charges::AbstractVector{<:Real}, 
     coor::AbstractVector{<:SVector}, 
     unit_cell, 
-    cutoff::Real
+    cutoff::Real;
+    standard_cutoff::Bool = false,
+    switch::Bool = false
 )
 
     # Define simulation box in this frame
@@ -188,18 +193,23 @@ function electrostatic_potential(
                     qsolute = solute_charges[iatom_solute]
                     y = wrap_relative_to(y,x,box) 
                     d = norm(y-x)
-                    #
-                    # uncommment for conventional electrostatic calculation
-                    #
-                    #if d > cutoff
-                    #    continue
-                    #end
-                    electrostatic_potential[ibatch] += qsolvent*qsolute / d
+                    qpair = qsolvent * qsolute / d
+                    if standard_cutoff
+                        if d > box.cutoff
+                            continue
+                        end
+                        if switch
+                            qpair -= qsolvent * qsolute / box.cutoff
+                        end
+                    end
+                    electrostatic_potential[ibatch] += qpair
                 end
             end
         end
     end
     return (332.05382e0 * 4.184) * sum(electrostatic_potential)
 end
+
+include("./testing.jl")
 
 end # module

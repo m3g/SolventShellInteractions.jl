@@ -26,13 +26,13 @@ solute = select(pdb, "protein")
 solvent = select(pdb, "resname EMI")
 
 # trajectory file (Gromacs xtc only)
-trajectory = "./simulacao_EMIMDCA.xtc"
+trajectory = "./simulacao_EMIMDCA_curta.xtc"
 
 # topology files
 top_files = [ "./topol.top", "./tip3p.itp" ]
 
 # distance of the first dip in the distribution
-cutoff = 8.
+cutoff = 10.
 
 # compute electrostatic potential
 u = electrostatic_potential(

@@ -3,3 +3,4 @@ test/files/simulacao_EMIMDCA.xtc
 *.swp
 src/SolvationInteractionPotential.jl
 test/files/processed.xtc
+.vscode/settings.json
