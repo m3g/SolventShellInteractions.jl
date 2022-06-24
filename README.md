@@ -95,7 +95,7 @@ Note that with `standard_cutoff` and/or `shift` turned on, the calculation is no
 
 This package uses the following libraries, which should be cited independently:
 
-[CellListMap.jl](https://github.com/m3g/CellListMap.jl): Efficient and customizable cell list implementation for calculation of pairwise particle properties within a cutoff. https://doi.org/10.48550/arXiv.2202.06427.
+[CellListMap.jl](https://github.com/m3g/CellListMap.jl): Efficient and customizable cell list implementation for calculation of pairwise particle properties within a cutoff. Computer Physics Communications, 279, 108452, 2022. (https://doi.org/10.1016/j.cpc.2022.108452)
 
 [Chemfiles.jl](https://github.com/chemfiles/Chemfiles.jl): A high-quality library for reading and writing trajectory files created by computational chemistry simulations programs. [10.5281/zenodo.1202207](https://doi.org/10.5281/zenodo.1202207).
 
