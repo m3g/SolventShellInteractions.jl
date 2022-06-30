@@ -1,7 +1,7 @@
 name = "SolventShellInteractions"
 uuid = "6093f9f3-f1b0-4441-8561-b50b03dfd470"
 authors = ["Leandro Martinez <lmartine@unicamp.br> and contributors"]
-version = "0.3.1-DEV"
+version = "0.3.1"
 
 [deps]
 CellListMap = "69e1c6dd-3888-40e6-b3c8-31ac5f578864"
@@ -14,7 +14,14 @@ ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [compat]
-julia = "1"
+julia = "1.6"
+CellListMap = "0.7"
+Chemfiles = "0.9, 0.10"
+FastPow = "0.1"
+MolecularMinimumDistances = "0.3"
+PDBTools = "0.13"
+ProgressMeter = "1.7"
+StaticArrays = "1.4"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
