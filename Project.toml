@@ -19,7 +19,7 @@ CellListMap = "0.7"
 Chemfiles = "0.9, 0.10"
 FastPow = "0.1"
 MolecularMinimumDistances = "0.3"
-PDBTools = "0.13"
+PDBTools = "0.13, 0.14"
 ProgressMeter = "1.7"
 StaticArrays = "1.4"
 
